@@ -2,7 +2,7 @@ CREATE TABLE users (
     user_id serial PRIMARY KEY,
     user_name VARCHAR(100) NOT NULL,
     email VARCHAR(100) not null unique ,
-    password VARCHAR(50) not null,
+    password VARCHAR(255) not null,
     created_at timestamp
 );
 CREATE TABLE posts (
@@ -16,3 +16,4 @@ CREATE TABLE posts (
 
 );
 drop table users,posts;
+truncate table users restart identity cascade;
