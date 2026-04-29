@@ -1,7 +1,10 @@
 package org.example.api_blog.service.Impl;
 
 import lombok.RequiredArgsConstructor;
+import org.example.api_blog.jwt.JwtAuthService;
+import org.example.api_blog.model.dto.request.LoginRequest;
 import org.example.api_blog.model.dto.request.RegisterRequest;
+import org.example.api_blog.model.dto.response.LoginResponse;
 import org.example.api_blog.model.entity.Auth;
 import org.example.api_blog.repository.AuthRepo;
 import org.example.api_blog.service.AuthService;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
     private final AuthRepo authRepo;
     private final PasswordEncoder passwordEncoder;
+    private final JwtAuthService jwtAuthService;
 
     @Override
     public UserDetails loadUserByUsername(String email) {
@@ -33,5 +37,19 @@ public class AuthServiceImpl implements AuthService {
         auth.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         auth.setCreatedAt(registerRequest.getCreatedAt());
         return authRepo.register(auth);
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest loginRequest) {
+        Auth auth = authRepo.findByEmail(loginRequest.getEmail());
+        if(auth == null){
+            throw new UsernameNotFoundException("User not found with email: " + loginRequest.getEmail());
+        }
+        if(!passwordEncoder.matches(loginRequest.getPassword(), auth.getPassword())){
+            throw new UsernameNotFoundException("Password is incorrect");
+        }
+
+        String token = jwtAuthService.generateToken(auth);
+        return LoginResponse.builder().token(token).build();
     }
 }
