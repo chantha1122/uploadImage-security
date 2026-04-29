@@ -18,10 +18,13 @@ public interface AuthRepo {
     Auth findByEmail(String email);
 
 
+
+
     @Select("""
         INSERT INTO users (user_name, email, password,created_at)
-        VALUES (#{req.userName}, #{req.email}, #{req.password},now()) returning *
+        VALUES (#{userName}, #{email}, #{password},now()) returning *
     """)
     @ResultMap("AuthMapper")
-    Auth register(@Param("req") RegisterRequest registerRequest);
+    Auth register( Auth auth);
+
 }
