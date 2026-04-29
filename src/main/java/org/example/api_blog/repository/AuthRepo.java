@@ -1,0 +1,27 @@
+package org.example.api_blog.repository;
+
+import org.apache.ibatis.annotations.*;
+import org.example.api_blog.model.dto.request.RegisterRequest;
+import org.example.api_blog.model.entity.Auth;
+
+@Mapper
+public interface AuthRepo {
+
+    @Select("SELECT * FROM users WHERE email = #{email}")
+    @Results(id = "AuthMapper", value = {
+            @Result(property = "userId", column = "user_id"),
+            @Result(property = "userName", column = "user_name"),
+            @Result(property = "email", column = "email"),
+            @Result(property = "password", column = "password"),
+            @Result(property = "createdAt",column = "created_at")
+    })
+    Auth findByEmail(String email);
+
+
+    @Select("""
+        INSERT INTO users (user_name, email, password,created_at)
+        VALUES (#{req.userName}, #{req.email}, #{req.password},now()) returning *
+    """)
+    @ResultMap("AuthMapper")
+    Auth register(@Param("req") RegisterRequest registerRequest);
+}
