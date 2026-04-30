@@ -13,4 +13,6 @@ public interface AuthService extends UserDetailsService {
     Auth register(RegisterRequest registerRequest);
 
     LoginResponse login(LoginRequest loginRequest);
+
+    Integer logoutAll(String email);
 }

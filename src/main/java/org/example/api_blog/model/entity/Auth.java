@@ -21,6 +21,7 @@ public class Auth implements UserDetails {
     private String userName;
     private String email;
     private String password;
+    private Integer tokenVersion = 0;
     private Timestamp createdAt;
 
     @JsonIgnore
@@ -33,7 +34,7 @@ public class Auth implements UserDetails {
     
     @Override
     public String getUsername() {
-        return userName;
+        return email;
     }
 
     @Override

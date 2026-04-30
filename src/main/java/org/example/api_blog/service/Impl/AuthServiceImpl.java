@@ -35,6 +35,7 @@ public class AuthServiceImpl implements AuthService {
         auth.setUserName(registerRequest.getUserName());
         auth.setEmail(registerRequest.getEmail());
         auth.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        auth.setTokenVersion(0);
         auth.setCreatedAt(registerRequest.getCreatedAt());
         return authRepo.register(auth);
     }
@@ -52,4 +53,15 @@ public class AuthServiceImpl implements AuthService {
         String token = jwtAuthService.generateToken(auth);
         return LoginResponse.builder().token(token).build();
     }
+
+    @Override
+    public Integer logoutAll(String email) {
+        Auth auth = authRepo.findByEmail(email);
+
+        if (auth == null) {
+            throw new RuntimeException("User not found");
+        }
+        return authRepo.incrementTokenVersion(auth.getUserId());
+    }
+
 }
