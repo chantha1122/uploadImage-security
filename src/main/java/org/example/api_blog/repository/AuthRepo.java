@@ -13,11 +13,10 @@ public interface AuthRepo {
             @Result(property = "userName", column = "user_name"),
             @Result(property = "email", column = "email"),
             @Result(property = "password", column = "password"),
+            @Result(property = "tokenVersion", column = "token_version"),
             @Result(property = "createdAt",column = "created_at")
     })
     Auth findByEmail(String email);
-
-
 
 
     @Select("""
@@ -26,5 +25,13 @@ public interface AuthRepo {
     """)
     @ResultMap("AuthMapper")
     Auth register( Auth auth);
+
+    @Select("""
+        UPDATE users
+            SET token_version = token_version + 1
+            WHERE user_id = #{userId} RETURNING token_version;
+    """)
+    Integer incrementTokenVersion(long userId);
+
 
 }

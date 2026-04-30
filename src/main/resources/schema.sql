@@ -3,6 +3,7 @@ CREATE TABLE users (
     user_name VARCHAR(100) NOT NULL,
     email VARCHAR(100) not null unique ,
     password VARCHAR(255) not null,
+    token_version int NOT NULL DEFAULT 0,
     created_at timestamp
 );
 CREATE TABLE posts (

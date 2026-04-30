@@ -18,7 +18,7 @@ import java.util.function.Function;
 @Component
 public class JwtAuthService {
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60; //5 hour
-    public static final String SECRET = "9vgDYqYOPxFEYC6/WGsLokuFP7q8jR5VoMJoK1S/nu4=";
+    public static final String SECRET = "h3b6mv05FxOfWOAKhhZe1ymkjdXVOpUCMi/7t/kpZbk=";
 //using website to generate key secret https://www.devglan.com/online-tools/hmac-sha256-online
 //Base64 encodes binary data into a set of 64 ASCII characters:
 //Format	Base	Characters Used
@@ -43,8 +43,15 @@ public class JwtAuthService {
     //2. generate token for user
     public String generateToken(UserDetails userDetails){
         Map<String, Object> claims = new HashMap<>();
-        Auth auth = (Auth) userDetails;
-        claims.put("userId", auth.getUserId());
+
+        if (userDetails instanceof Auth auth) {
+            claims.put("userId", auth.getUserId());
+            claims.put("version", auth.getTokenVersion());
+            claims.put("userName", auth.getUsername());
+
+            return createToken(claims, auth.getEmail());
+        }
+
         return createToken(claims, userDetails.getUsername());
     }
 
@@ -55,6 +62,10 @@ public class JwtAuthService {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public Integer extractVersion(String token) {
+        return extractClaim(token, claims -> claims.get("version", Integer.class));
     }
 
     //4. extract a specific claim from the JWT token’s claims.
@@ -77,10 +88,13 @@ public class JwtAuthService {
     private Boolean isTokenExpired(String token) {
         return extractExpirationDate(token).before(new Date());
     }
-
     //8. validate token
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
+
+        System.out.println("JWT Subject: " + username);
+        System.out.println("UserDetails Username: " + userDetails.getUsername());
+
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 }
