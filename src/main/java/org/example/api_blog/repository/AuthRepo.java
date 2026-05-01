@@ -34,4 +34,9 @@ public interface AuthRepo {
     Integer incrementTokenVersion(long userId);
 
 
+    @Select("""
+        SELECT * FROM users WHERE user_id = #{userId}
+    """)
+    @ResultMap("AuthMapper")
+    Auth findByUserId(long userId);
 }
