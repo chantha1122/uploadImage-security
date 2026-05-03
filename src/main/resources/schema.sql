@@ -10,7 +10,6 @@ CREATE TABLE posts (
     post_id serial PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     description VARCHAR(255) NOT NULL ,
-    image VARCHAR(255),
     user_id int not null,
     created_at timestamp,
     constraint fk_key foreign key (user_id) references users(user_id) on update cascade on delete cascade
@@ -23,5 +22,5 @@ CREATE TABLE post_image(
     constraint fk_key foreign key (post_id) references posts(post_id) on update cascade on delete  cascade
 );
 
-drop table users,posts;
+drop table users,posts,post_image;
 truncate table users restart identity cascade;

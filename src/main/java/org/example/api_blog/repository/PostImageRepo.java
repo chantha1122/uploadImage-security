@@ -16,5 +16,6 @@ public interface PostImageRepo {
             </foreach>
         </script>
     """)
+    @Options(useGeneratedKeys = true, keyProperty = "imageId", keyColumn = "image_id")
     void insertImage(@Param("req") List<PostImage> images);
 }
